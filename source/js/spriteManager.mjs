@@ -9,6 +9,7 @@ import {
 } from "./enemyManager.mjs";
 import { getEnemyFireRate, getEnemyShotsPerFire } from "./level.mjs";
 import { StatType, add, getCurrentPlayTime } from "./state.mjs";
+import { playShotSound } from "./audio.mjs";
 
 /** @typedef {import("./Sprite.mjs").SpriteInstance} SpriteInstance */
 
@@ -223,6 +224,7 @@ function fireHander() {
         15
     );
     playerShots.push(shot);
+    playShotSound();
 }
 /**
  * @description main update for sprites

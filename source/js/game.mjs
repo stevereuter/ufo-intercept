@@ -10,6 +10,7 @@ import { enemies, createEnemySwarm } from "./enemyManager.mjs";
 import { createShields, removeShots, update } from "./spriteManager.mjs";
 import { StatType, add, get, getStats, reset, run, stop } from "./state.mjs";
 import { createShip } from "./player.mjs";
+import { initAudio } from "./audio.mjs";
 
 /** @enum {number} */
 const GameState = {
@@ -140,5 +141,6 @@ export async function load() {
     start();
     const spritesheet = await loadImageAsync();
     setSpriteSheet(spritesheet);
+    initAudio();
     loop();
 }
