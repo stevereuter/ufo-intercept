@@ -22,11 +22,11 @@ export function playShotSound() {
     if (!audioContext) return;
 
     const now = audioContext.currentTime;
-    const duration = 0.2;
+    const duration = 0.3;
 
     // Create an oscillator for the sound source
     const oscillator = audioContext.createOscillator();
-    oscillator.type = "square"; // Common for retro sounds
+    oscillator.type = "sawtooth";
 
     // Create a gain node to control the volume envelope
     const gainNode = audioContext.createGain();
@@ -36,14 +36,14 @@ export function playShotSound() {
     gainNode.connect(audioContext.destination);
 
     // Pitch envelope (makes the "pew" sound)
-    oscillator.frequency.setValueAtTime(880, now); // Start high
+    oscillator.frequency.setValueAtTime(680, now); // Start high
     oscillator.frequency.exponentialRampToValueAtTime(
-        220,
-        now + duration * 0.8
+        140,
+        now + duration * 0.5
     ); // Drop quickly
 
     // Volume envelope (makes the sound short)
-    gainNode.gain.setValueAtTime(0.3, now); // Start volume
+    gainNode.gain.setValueAtTime(0.5, now); // Start volume
     gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration); // Fade out
 
     // Start and stop the sound
