@@ -41,7 +41,7 @@ function getSpeedPercent(loopTime, gameTime) {
 function loadImageAsync() {
     return new Promise((resolve) => {
         const image = new Image();
-        image.src = "source/images/space_invaders_sprites.png";
+        image.src = "source/images/ufo_intercept_sprites.png";
         image.onload = () => resolve(image);
     });
 }
@@ -61,7 +61,7 @@ function start() {
             "",
             "FIRE TO START",
         ],
-        35
+        35,
     );
     createEnemySwarm();
     createShields();
