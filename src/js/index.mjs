@@ -1,3 +1,3 @@
-import { load } from "/src/js/game.mjs";
+import { load } from "./game.mjs";
 
 load();
