@@ -106,7 +106,7 @@ function getDisplayTextByType(type) {
         case StatType.Bonuses:
             return "Bonus ships destroyed";
         case StatType.Enemies:
-            return "Invaders destroyed";
+            return "UFO's destroyed";
         case StatType.Hits:
             return "Invader shots hit";
         case StatType.Level:
@@ -135,7 +135,7 @@ export function getStats() {
         const displayText = getDisplayTextByType(key);
         if (key === displayText) return;
         message.push(
-            padMiddle(getDisplayTextByType(key), value.toString(), 30, " ")
+            padMiddle(getDisplayTextByType(key), value.toString(), 30, " "),
         );
     });
     const playTime = getCurrentPlayTime() / 1000;
