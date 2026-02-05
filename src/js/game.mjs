@@ -41,7 +41,7 @@ function getSpeedPercent(loopTime, gameTime) {
 function loadImageAsync() {
     return new Promise((resolve) => {
         const image = new Image();
-        image.src = "source/images/ufo_intercept_sprites.png";
+        image.src = "/src/images/ufo_intercept_sprites.png";
         image.onload = () => resolve(image);
     });
 }
