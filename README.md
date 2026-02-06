@@ -1,5 +1,12 @@
 # UFO Intercept
 
+<div align="center">
+  <a href="https://steviesaurus-dev.itch.io/ufo-intercept" target="_blank">
+    <img src="assets/thumbnail.png" alt="UFO Intercept Cover Art" width="400" style="image-rendering: pixelated;" />
+  </a>
+  <p><i>Click to play on itch.io</i></p>
+</div>
+
 Space Invaders type game in HTML Canvas element.
 This is currently in an initial state where the main system is built and ready for features to be added.
 
