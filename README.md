@@ -12,7 +12,7 @@ This is currently in an initial state where the main system is built and ready f
 
 ## Story
 
-An alien force has been detected, and they are building their army in preperation to attach us. We will send a small fleet to intercept them before they are too strong for us to defend. Interupting there development, and stealing their tech may give the advantage we need to succeed.
+An alien force has been detected, and they are building their army in preperation to attack us. We will send a small fleet to intercept them before they are too strong for us to defend. Interupting there development, and stealing their tech may give the advantage we need to succeed.
 
 ## Featres
 
