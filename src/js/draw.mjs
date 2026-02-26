@@ -1,6 +1,6 @@
 import { main } from "./dom.mjs";
 import { sprite } from "./player.mjs";
-import { bonusEnemy, enemies } from "./enemyManager.mjs";
+import { bonusEnemy, enemies, powerUp } from "./enemyManager.mjs";
 import { enemyShots, playerShots, shields } from "./spriteManager.mjs";
 import { StatType, get } from "./state.mjs";
 import { getHighScore } from "./highScore.mjs";
@@ -90,7 +90,7 @@ function getAnimationFrame(
     loopTime,
     animationLength,
     frameCount,
-    reverseAtEnd = false
+    reverseAtEnd = false,
 ) {
     const timeStamp = Math.round(loopTime % animationLength);
     const totalFrameCount = reverseAtEnd
@@ -115,7 +115,7 @@ function getAnimationFrame(
  * @returns {void}
  */
 function drawEnemy(enemySprite, loopTime) {
-    const frame = getAnimationFrame(loopTime, 500, 2);
+    const frame = getAnimationFrame(loopTime, 500, 4);
     gameCtx.drawImage(
         spritesheet,
         frame,
@@ -125,7 +125,7 @@ function drawEnemy(enemySprite, loopTime) {
         enemySprite.getLeft(),
         enemySprite.getTop(),
         enemySprite.width,
-        enemySprite.height
+        enemySprite.height,
     );
 }
 
@@ -135,7 +135,7 @@ function drawEnemy(enemySprite, loopTime) {
  * @param {number} loopTime loop time
  */
 function drawBonusEnemy(sprite, loopTime) {
-    const frame = getAnimationFrame(loopTime, 400, 4, true);
+    const frame = getAnimationFrame(loopTime, 300, 4, true);
     gameCtx.drawImage(
         spritesheet,
         frame,
@@ -145,7 +145,24 @@ function drawBonusEnemy(sprite, loopTime) {
         sprite.getLeft(),
         sprite.getTop(),
         sprite.width,
-        sprite.height
+        sprite.height,
+    );
+}
+
+function drawPowerUp(loopTime) {
+    const frame = getAnimationFrame(loopTime, 400, 4);
+    const sprite = powerUp;
+    if (!sprite) return;
+    gameCtx.drawImage(
+        spritesheet,
+        frame,
+        250,
+        50,
+        50,
+        sprite.getLeft(),
+        sprite.getTop(),
+        sprite.width,
+        sprite.height,
     );
 }
 
@@ -238,7 +255,7 @@ function drawShields() {
             shield.getLeft(),
             shield.getTop(),
             shield.width,
-            shield.height
+            shield.height,
         );
     }
 }
@@ -257,4 +274,5 @@ export function draw(loopTime) {
     drawPlayerLives();
     drawHighScore();
     drawShields();
+    drawPowerUp(loopTime);
 }

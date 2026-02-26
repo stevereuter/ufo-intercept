@@ -1,6 +1,7 @@
 import Sprite from "./Sprite.mjs";
 import { Direction } from "./keyboard.mjs";
 import { getEnemyMaxSpeed } from "./level.mjs";
+import { sprite } from "./player.mjs";
 import { StatType, add, getCurrentPlayTime } from "./state.mjs";
 /** @typedef {import("./Sprite.mjs").SpriteInstance} SpriteInstance */
 
@@ -14,6 +15,8 @@ const Bounds = {
 export const enemies = [];
 /** @type {SpriteInstance} */
 export let bonusEnemy;
+export let powerUp;
+
 let bonusEnemyTime = 0;
 let bonusEnemyDirection;
 let direction = Direction.Right;
@@ -66,7 +69,7 @@ export function createEnemySwarm() {
  */
 function getMaxEnemyRight() {
     return Math.max(
-        ...enemies.map((sprite) => sprite.getLeft() + sprite.width)
+        ...enemies.map((sprite) => sprite.getLeft() + sprite.width),
     );
 }
 
@@ -148,7 +151,7 @@ function updateBonusEnemy(speedX) {
             bonusEnemyDirection === Direction.Right ? -50 : 600,
             25,
             50,
-            50
+            50,
         );
     }
     const outOfBounds =
@@ -157,7 +160,7 @@ function updateBonusEnemy(speedX) {
     bonusEnemy.update(
         bonusEnemy.getLeft() + speedX * bonusEnemyDirection,
         bonusEnemy.getTop(),
-        bonusEnemy.isHit() || outOfBounds
+        bonusEnemy.isHit() || outOfBounds,
     );
     if (!bonusEnemy.isHit()) return;
     if (outOfBounds) {
@@ -165,9 +168,37 @@ function updateBonusEnemy(speedX) {
     } else {
         add(StatType.Score, 500);
         add(StatType.Bonuses);
+        // create power up
+        powerUp = new Sprite(
+            bonusEnemy.getLeft(),
+            bonusEnemy.getTop(),
+            50,
+            50,
+            250,
+        );
     }
     bonusEnemy = null;
     bonusEnemyTime = playTime;
+}
+
+function updatePowerUp(loopSpeed) {
+    if (!powerUp) return;
+    if (powerUp.getTop() > Bounds.Bottom) {
+        powerUp = null;
+        return;
+    }
+
+    // check for player collection
+    if (powerUp.hasCollision(sprite)) {
+        // TODO: update score and add temporary random power up effect
+        add(StatType.Score, 500);
+        powerUp = null;
+        return;
+    }
+
+    // move power up down
+    const powerUpSpeed = 100 * loopSpeed;
+    powerUp.update(powerUp.getLeft(), powerUp.getTop() + powerUpSpeed, false);
 }
 
 /**
@@ -179,6 +210,7 @@ export function updateEnemies(loopSpeed) {
     updateEnemySwarm(speedX);
     const bonusSpeed = (getEnemyMaxSpeed() / 2) * loopSpeed;
     updateBonusEnemy(bonusSpeed);
+    updatePowerUp(loopSpeed);
 }
 
 /**
