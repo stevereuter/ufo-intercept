@@ -15,7 +15,7 @@ let height;
 export let sprite;
 // default speed, shot speed, and rate of fire
 /** @type {import("./modifier.mjs").ModifierManager} */
-export const playerModifier = new ModifierManager(100, 400, 750, 2);
+export const playerModifier = new ModifierManager(100, 400, 750);
 
 /**
  * @description for creating the ship based on the canvas size
