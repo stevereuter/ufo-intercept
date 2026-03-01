@@ -1,6 +1,6 @@
 import Sprite from "./Sprite.mjs";
 import { isFiring } from "./keyboard.mjs";
-import { updateShip, sprite } from "./player.mjs";
+import { updateShip, sprite, playerModifier } from "./player.mjs";
 import {
     updateEnemies,
     checkEnemyCollisions,
@@ -10,24 +10,23 @@ import {
 import { getEnemyFireRate, getEnemyShotsPerFire } from "./level.mjs";
 import { StatType, add, getCurrentPlayTime } from "./state.mjs";
 import { playShotSound } from "./audio.mjs";
+import { ModifierType } from "./modifier.mjs";
 
 /** @typedef {import("./Sprite.mjs").SpriteInstance} SpriteInstance */
 
 /** @type {SpriteInstance[]} */
 export const playerShots = [];
-const fireRate = 750;
-let shotFired = 0;
-const shotSpeed = 400;
+let shotFiredTimestamp = 0;
 /** @type {SpriteInstance[]} */
 export const enemyShots = [];
-let enemyShotFired = 0;
+let enemyShotFiredTimestamp = 0;
 const enemyShotSpeed = 300;
 /** @type {SpriteInstance[]} */
 export const shields = [];
 
 export function resetShots() {
-    shotFired = 0;
-    enemyShotFired = 0;
+    shotFiredTimestamp = 0;
+    enemyShotFiredTimestamp = 0;
 }
 
 export function createShields() {
@@ -94,8 +93,8 @@ function updateShields() {
  */
 function fireEnemyShots() {
     const playTime = getCurrentPlayTime();
-    if (!enemyShotFired) enemyShotFired = playTime;
-    if (enemyShotFired + getEnemyFireRate() > playTime) return;
+    if (!enemyShotFiredTimestamp) enemyShotFiredTimestamp = playTime;
+    if (enemyShotFiredTimestamp + getEnemyFireRate() > playTime) return;
     const enemyCount = enemies.length;
     // get random enemies
     const qty = Math.min(getEnemyShotsPerFire(), enemyCount);
@@ -109,11 +108,11 @@ function fireEnemyShots() {
                 enemySprite.getLeft() + (enemySprite.width - shotWidth) / 2,
                 enemySprite.getBottom(),
                 shotWidth,
-                15
-            )
+                15,
+            ),
         );
     });
-    enemyShotFired = playTime;
+    enemyShotFiredTimestamp = playTime;
 }
 
 /**
@@ -140,7 +139,7 @@ function updateEnemyShots(speedPercent) {
         enemyShots[i].update(
             getLeft(),
             getTop() + speed,
-            hasHit || outOfBounds
+            hasHit || outOfBounds,
         );
 
         if (isHit()) {
@@ -170,10 +169,15 @@ function checkEnemyShotCollisions(playerShot) {
 /**
  * @description updates fired shots
  * @param {number} speedPercent loop speed percent
+ * @param {number} loopTime loop timestamp
  */
-function updateShots(speedPercent) {
+function updateShots(speedPercent, loopTime) {
     const shotLength = playerShots.length;
     if (!shotLength) return;
+    const shotSpeed = playerModifier.getModifier(
+        ModifierType.ShotSpeed,
+        loopTime,
+    );
     const speed = shotSpeed * speedPercent;
     // update player shots, loop backwards as we splice
     for (let i = shotLength - 1; i >= 0; i -= 1) {
@@ -186,7 +190,6 @@ function updateShots(speedPercent) {
                 hasHit = shot.hasCollision(shield);
                 if (hasHit) {
                     shield.hit();
-                    add(StatType.Shields);
                     break;
                 }
             }
@@ -198,7 +201,7 @@ function updateShots(speedPercent) {
         shot.update(
             shot.getLeft(),
             shot.getTop() - speed,
-            hasHit || outOfBounds
+            hasHit || outOfBounds,
         );
 
         if (shot.isHit()) {
@@ -209,32 +212,50 @@ function updateShots(speedPercent) {
 
 /**
  * @description handle firing shots
+ * @param {number} loopTime loop timestamp
  */
-function fireHander() {
+function fireHander(loopTime) {
     const playTime = getCurrentPlayTime();
-    if (!isFiring() || shotFired + fireRate >= playTime) return;
-    // spawn shot
-    shotFired = playTime;
-    add(StatType.Shots);
-    const shotWidth = 5;
-    const shot = new Sprite(
-        sprite.getLeft() + (sprite.width - shotWidth) / 2,
-        sprite.getTop(),
-        shotWidth,
-        15
+    const fireRate = playerModifier.getModifier(
+        ModifierType.RateOfFire,
+        loopTime,
     );
+    if (!isFiring() || shotFiredTimestamp + fireRate >= playTime) return;
+    // spawn shot
+    shotFiredTimestamp = playTime;
+    add(StatType.Shots);
+    const shotCount = playerModifier.getModifier(
+        ModifierType.ShotCount,
+        loopTime,
+    );
+    const shotWidth = 5;
+    const center = sprite.getLeft() + (sprite.width - shotWidth) / 2;
+    if (shotCount > 1) {
+        // left shot
+        const left = new Sprite(center - 15, sprite.getTop(), shotWidth, 15);
+        // right shot
+        const right = new Sprite(center + 15, sprite.getTop(), shotWidth, 15);
+        playerShots.push(left);
+        playerShots.push(right);
+        playShotSound(loopTime);
+        setTimeout(() => playShotSound(loopTime), 50);
+        return;
+    }
+
+    const shot = new Sprite(center, sprite.getTop(), shotWidth, 15);
     playerShots.push(shot);
-    playShotSound();
+    playShotSound(loopTime);
 }
 /**
  * @description main update for sprites
  * @param {number} loopSpeed loop speed percent
+ * @param {number} loopTime loop timestamp
  */
-export function update(loopSpeed) {
-    updateShip(loopSpeed);
-    updateEnemies(loopSpeed);
-    updateShots(loopSpeed);
-    fireHander();
+export function update(loopSpeed, loopTime) {
+    updateShip(loopSpeed, loopTime);
+    updateEnemies(loopSpeed, loopTime);
+    updateShots(loopSpeed, loopTime);
+    fireHander(loopTime);
     fireEnemyShots();
     updateEnemyShots(loopSpeed);
     updateShields();

@@ -1,3 +1,6 @@
+import { ModifierType } from "./modifier.mjs";
+import { playerModifier } from "./player.mjs";
+
 let audioContext;
 
 /**
@@ -7,8 +10,9 @@ let audioContext;
 export function initAudio() {
     if (!audioContext) {
         try {
-            audioContext = new (window.AudioContext ||
-                window.webkitAudioContext)();
+            audioContext = new (
+                window.AudioContext || window.webkitAudioContext
+            )();
         } catch (e) {
             console.error("Web Audio API is not supported in this browser.");
         }
@@ -17,8 +21,9 @@ export function initAudio() {
 
 /**
  * Plays a retro "pew" sound for a laser shot.
+ * @param {number} loopTime
  */
-export function playShotSound() {
+export function playShotSound(loopTime) {
     if (!audioContext) return;
 
     const now = audioContext.currentTime;
@@ -36,10 +41,14 @@ export function playShotSound() {
     gainNode.connect(audioContext.destination);
 
     // Pitch envelope (makes the "pew" sound)
-    oscillator.frequency.setValueAtTime(680, now); // Start high
+    const frequency = playerModifier.getModifier(
+        ModifierType.ShotSpeed,
+        loopTime,
+    );
+    oscillator.frequency.setValueAtTime(frequency, now); // Start high
     oscillator.frequency.exponentialRampToValueAtTime(
         140,
-        now + duration * 0.5
+        now + duration * 0.5,
     ); // Drop quickly
 
     // Volume envelope (makes the sound short)

@@ -1,4 +1,5 @@
 import { getDirection } from "./keyboard.mjs";
+import { ModifierManager, ModifierType } from "./modifier.mjs";
 import Sprite from "./Sprite.mjs";
 import { get, minus, StatType } from "./state.mjs";
 
@@ -12,6 +13,9 @@ let width;
 let height;
 /** @type {import("./Sprite.mjs").SpriteInstance} */
 export let sprite;
+// default speed, shot speed, and rate of fire
+/** @type {import("./modifier.mjs").ModifierManager} */
+export const playerModifier = new ModifierManager(100, 400, 750, 2);
 
 /**
  * @description for creating the ship based on the canvas size
@@ -28,7 +32,7 @@ export function createShip(canvasWidth = 600, canvasHeight = 600) {
         width / 2 - shipWidth / 2,
         height - shipHeight * 2,
         shipWidth,
-        shipHeight
+        shipHeight,
     );
 }
 
@@ -43,8 +47,6 @@ export function resetShip() {
 export function getShipTopCenter() {
     return [sprite.getLeft() + shipWidth / 2, sprite.getTop()];
 }
-// ship top 500, height 50
-const shipSpeed = 100;
 /**
  * @description get if is at left end
  * @returns {boolean} at left end
@@ -78,9 +80,11 @@ function updateShipPosition(speed) {
 /**
  * @description updates the player ship
  * @param {number} loopSpeed loop speed percent
+ * @param {number} loopTime loop timestamp
  * @returns {void}
  */
-export function updateShip(loopSpeed) {
-    const speed = shipSpeed * loopSpeed;
+export function updateShip(loopSpeed, loopTime) {
+    const speed =
+        playerModifier.getModifier(ModifierType.Speed, loopTime) * loopSpeed;
     updateShipPosition(speed);
 }

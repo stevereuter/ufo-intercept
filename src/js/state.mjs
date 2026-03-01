@@ -14,6 +14,7 @@ export const StatType = {
     Shields: "shieldsHit",
     Level: "level",
     Hits: "shotsHit",
+    PowerUp: "powerUpCollected",
 };
 
 const stats = {
@@ -29,6 +30,7 @@ const stats = {
     playTimeMap: new Map(),
     currentPlayTimeKey: 0,
     level: 1,
+    powerUpCollected: 0,
 };
 
 export function reset() {
@@ -44,6 +46,7 @@ export function reset() {
     stats.currentPlayTimeKey = 0;
     stats.level = 1;
     stats.shotsHit = 0;
+    stats.powerUpCollected = 0;
     resetShots();
     resetBonusEnemy();
     resetShip();
@@ -68,7 +71,7 @@ export function add(type, value) {
         StatType.Enemies,
         StatType.Bonuses,
         StatType.Missed,
-        StatType.Shields,
+        StatType.PowerUp,
         StatType.Shots,
         StatType.Score,
         StatType.Level,
@@ -113,8 +116,8 @@ function getDisplayTextByType(type) {
             return "Level";
         case StatType.Shots:
             return "Shots fired";
-        case StatType.Shields:
-            return "Shields destroyed";
+        case StatType.PowerUp:
+            return "Power-ups collected";
     }
     return type;
 }

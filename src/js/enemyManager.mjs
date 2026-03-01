@@ -1,7 +1,7 @@
 import Sprite from "./Sprite.mjs";
 import { Direction } from "./keyboard.mjs";
 import { getEnemyMaxSpeed } from "./level.mjs";
-import { sprite } from "./player.mjs";
+import { playerModifier, sprite } from "./player.mjs";
 import { StatType, add, getCurrentPlayTime } from "./state.mjs";
 /** @typedef {import("./Sprite.mjs").SpriteInstance} SpriteInstance */
 
@@ -50,13 +50,12 @@ export function createEnemySwarm() {
         [60, 200],
         [110, 150],
         [160, 0],
-        [210, 0],
     ]);
     enemies.length = 0;
     const size = 30;
     const gap = 20;
     for (let x = gap; x <= 350; x += size + gap) {
-        for (let y = gap * 3; y < 250; y += size + gap) {
+        for (let y = gap * 3; y < 200; y += size + gap) {
             enemies.push(new Sprite(x, y, 40, 40, spriteReference.get(y)));
         }
     }
@@ -181,7 +180,7 @@ function updateBonusEnemy(speedX) {
     bonusEnemyTime = playTime;
 }
 
-function updatePowerUp(loopSpeed) {
+function updatePowerUp(loopSpeed, loopTime) {
     if (!powerUp) return;
     if (powerUp.getTop() > Bounds.Bottom) {
         powerUp = null;
@@ -190,8 +189,9 @@ function updatePowerUp(loopSpeed) {
 
     // check for player collection
     if (powerUp.hasCollision(sprite)) {
-        // TODO: update score and add temporary random power up effect
+        playerModifier.addRandomModifier(loopTime);
         add(StatType.Score, 500);
+        add(StatType.PowerUp, 1);
         powerUp = null;
         return;
     }
@@ -204,13 +204,14 @@ function updatePowerUp(loopSpeed) {
 /**
  * @description updates the enemies
  * @param {number} loopSpeed loop percent
+ * @param {number} loopTime loop timestamp
  */
-export function updateEnemies(loopSpeed) {
+export function updateEnemies(loopSpeed, loopTime) {
     const speedX = enemySpeed * loopSpeed;
     updateEnemySwarm(speedX);
     const bonusSpeed = (getEnemyMaxSpeed() / 2) * loopSpeed;
     updateBonusEnemy(bonusSpeed);
-    updatePowerUp(loopSpeed);
+    updatePowerUp(loopSpeed, loopTime);
 }
 
 /**
