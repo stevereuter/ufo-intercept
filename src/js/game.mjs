@@ -116,7 +116,7 @@ function loop() {
 
     // update when running
     if (currentState === GameState.Running) {
-        update(loopSpeed);
+        update(loopSpeed, loopTime);
         draw(loopTime);
     }
 
