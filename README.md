@@ -22,3 +22,9 @@ An alien force has been detected, and they are building their army in preperatio
 - multiple levels of power ups
 - permenant power up can be equipped after boss, available items based on the number of power ups collected
 - random power up added to alien swarm levels based on bonus ships not destroyed
+
+## License
+
+The source code is licensed under the MIT License.
+Game assets (graphics, audio, story content, branding) are © Steviesaurus Dev and are not licensed for reuse. 
+Feel free to learn from the code and use it in your own projects, but please create your own original assets.
