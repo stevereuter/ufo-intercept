@@ -25,6 +25,8 @@ An alien force has been detected, and they are building their army in preperatio
 
 ## License
 
-The source code is licensed under the MIT License.
-Game assets (graphics, audio, story content, branding) are © Steviesaurus Dev and are not licensed for reuse. 
-Feel free to learn from the code and use it in your own projects, but please create your own original assets.
+Code: Licensed under the [MIT License](LICENSE)
+
+Assets: Licensed under [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International](assets/LICENSE)
+
+Feel free to learn from the code and use it in your own projects. Assets (images, sprites, audio, etc.) and data generated from them may be shared and adapted under the CC BY-NC-SA 4.0 terms — please provide attribution and distribute derivative works under the same license.
